@@ -1,0 +1,7 @@
+#!/bin/bash
+
+DB_CMD=/usr/bin/sqlite3
+FN_DB=./puppet_enc.sqlite
+FN_SQL=import_csv.sql
+
+$DB_CMD $FN_DB <$FN_SQL
