@@ -16,11 +16,11 @@ External Node Classifier for Puppet Master
 * View contents of entire database
   * `lsdb.sh`
 * View settings for nodes matching a (sub)string
-  * `lsnode.sh` _<STRING>_
+  * `lsnode.sh` _STRING_
   * Example: Show all nodes with the string _test_ anywhere in their FQDN
     * `lsnode.sh test`
 * Update a node
-  * `chnode.sh` _<FQDN> <KEY> <VALUE>_
+  * `chnode.sh` _FQDN KEY VALUE_
   * Example: Move node to test environment
     * `chnode.sh my_test_node.vm.dev.lsst.org environment test`
 * Update a node (alternative)
