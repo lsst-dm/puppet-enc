@@ -49,8 +49,8 @@ def output_yaml(enc):
     """ output_yaml renders the hash as yaml and exits cleanly
     """
     # output the ENC as yaml
-    print "---"
-    print yaml.dump(enc)
+    print ("---")
+    print (yaml.dump(enc))
 
 
 def run():
