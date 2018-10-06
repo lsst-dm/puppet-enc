@@ -1,0 +1,2 @@
+puppet-master,ls,bdc,gs,role::it::puppet_master,production
+dm-hs,po,po,dm,role::dm::dm_header_service,production
