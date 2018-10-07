@@ -1,2 +1,13 @@
 puppet-master,ls,bdc,gs,role::it::puppet_master,production
 dm-hs,po,po,dm,role::dm::dm_header_service,production
+ts-sw-env,ts,bdc,tcs,role::ts::ts_dev_env_basic,production
+ts-visitsim,ts,bdc,tcs,role::ts::ts_visit_simulator,production
+ats-shutter-hcu,ccs,bdc,ccs,role::ccs::ats_shutter_hcu,production
+ts-efd,ts,bdc,tcs,role::ts::efd,production
+ts-intcluster,ts,bdc,tcs,role::ts::ts_intcluster,production
+tcs-dome,ts,bdc,tcs,role::ts::ts_dome,production
+tcs-rotator,ts,bdc,tcs,role::ts::ts_rotator,production
+influxdb,cp,cp,gs,role::it::influxdb,production
+grafana,cp,cp,gs,role::it::grafana,production
+graylog,cp,cp,gs,role::it::graylog,production
+gs-it-dhcp,cp,cp,gs,role::it::gs_dhcp,production

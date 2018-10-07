@@ -11,9 +11,9 @@ CREATE TABLE "Nodes" (
 .import config/nodes_database.csv Nodes
 DROP TABLE IF EXISTS TemporaryEnvironmentConfiguration;
 CREATE TABLE "TemporaryEnvironmentConfiguration" (
-	"fqdn"  TEXT UNIQUE NOT NULL,
+	"fqdn"  TEXT UNIQUE NOT NULL Primary Key,
 	"environment"  TEXT NOT NULL,
-	"ConfTimeStart"  TEXT NOT NULL Primary Key,
+	"ConfTimeStart"  TEXT NOT NULL,
 	"ConfTimeEnd"  TEXT NOT NULL
 );
 .separator ","

@@ -36,7 +36,7 @@ def sql_lookup( dbfn, node ):
     conn = sqlite3.connect( dbfn )
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
-    sql = "select site,datacenter,cluster,role,environment from Nodes where fqdn=?"
+    sql = "select site,datacenter,cluster,role,environment from Nodes where node_definition=?"
     c.execute( sql, (node,) )
     r = c.fetchone()
     rv = {}
@@ -73,12 +73,12 @@ def run():
     except ( KeyError ) as e:
         classes.append( "hostname_problem" )
     else:
-        classes = [ 'role::{0}'.format( role ) ]
+        classes = [ '{0}'.format( role ) ]
     
     # build hash for yaml
     enc = { 
         "classes": classes,
-        "parameters": parms,
+        #"parameters": parms,
         "environment": env,
     }
 
