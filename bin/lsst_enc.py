@@ -8,15 +8,21 @@ import yaml
 import sqlite3
 import argparse
 
-
 def process_cmdline():
+    """Process command line arguments. It is used to parse the arguments provided from the 
+    command line or puppet. This script should be executed by default only by puppet, so 
+    most likely to use the default value for the database location.
+
+    Return:
+        Args.
+    """
     desc = "LSST Puppet ENC"
     parser = argparse.ArgumentParser( description=desc )
     parser.add_argument( '--dbfilename', '-d', 
         help="Sqlite3 database filename [default='%(default)s]'" )
     parser.add_argument( 'fqdn', metavar='FQDN' )
     defaults = { 
-        'dbfilename': '/etc/puppetlabs/code/config/scripts/puppet_enc.sqlite',
+        'dbfilename': '/etc/puppetlabs/code/config/data/puppet_enc.sqlite',
     }
     parser.set_defaults( **defaults )
     args = parser.parse_args()
@@ -27,6 +33,26 @@ def process_cmdline():
 
 # This will return the node definition that best matches 
 def find_node_definition(cursor, fqdn):
+    """Find the node regex/node definition withim the SQlite provided database.
+    The Nodes database is filled with node definitions/regex rather than FQDN to allow grouping
+    server's behavior, in that way, the database only have generic names and specifications of which
+    role has to be applied to each definition, regardles of the FQDN, in that way, you don't have a long list
+    of nodes but a shorter one with generic definitions. Also you don't depend on a specific naming convention
+    you only need a regex that can be easily changed. This function will return the longest match found between
+    the FQDN received and the nodes definition stored in the DB.
+
+    Parameters
+    ----------
+        cursor: sqlite3.Connection.cursor
+            Cursor used to interact with the database
+        fqdn: String
+            Fully Qualified Domain Name, used to determine which role must be applied.
+
+    Returns
+    ----------
+        None: if no node definitions were found.
+        String: The node definition that best match the FQDN received. 
+    """
     sql = "SELECT node_definition FROM Nodes"
     node_regex = cursor.execute( sql )
     selected_definition = None
@@ -42,6 +68,29 @@ def find_node_definition(cursor, fqdn):
         return selected_definition.group(0)
 
 def find_temporary_environment(cursor, fqdn):
+    """Find if there is any temporary environment definition for a given node.
+    There are situations in where you want to try a configuration in production for 
+    a given and fixed time, so, there is a table in the sqlite database that has that 
+    information. Ideally that Table will have only FQDN just for a given amount of nodes
+    in where that new environment should be applied. If there is a FQDN in there, then 
+    that environment is returned, otherwhise None is returned. The temporary environments
+    configuration table also have an starting date and ending date in where that configuration
+    is valid, if that start date is not met, then this function will return null, if end date
+    has been reached, this function will delete that server from the environments database and
+    return None as well.
+
+    Parameters
+    ----------
+        cursor: sqlite3.Connection.cursor
+            Cursor used to interact with the database
+        fqdn: String
+            Fully Qualified Domain Name, used to determine which role must be applied.
+
+    Returns
+    ----------
+        None: if no temporary configuration was found for this given FQDN
+        String: The environment stored in the DB that has to be applied to that FQDN in the given period of time.
+    """
     sql = "SELECT environment, ConfTimeStart, ConfTimeEnd FROM TemporaryEnvironmentConfiguration WHERE fqdn=?"
     cursor.execute( sql, (fqdn,) )
     r = cursor.fetchone()
@@ -69,12 +118,32 @@ def find_temporary_environment(cursor, fqdn):
 
 #TODO Improve the query in such a way that can be inferred from hiera_parameters.yaml
 def sql_lookup( dbfn, node ):
-    """ def sql_lookup( dbfn, node ):
-        Lookup fqdn in database and return hash of values for
-        site,datacenter,cluster,role
-        PARAMETERS:
-            dbfn - string - sqlite3 database filename
-            node - string - fully qualified domain name
+    """Lookup fqdn in database and return hash of values for parameters defined in hiera
+    This function will use the FQDN to find the exact match in the DB by using function:
+    find_node_definition, then will try to verify if there is any temporary definition
+    that should be applied to that node using function: find_temporary_environment
+    Finally, based on the received information it will either look all the parameters
+    related with the node definition that best fit the FQDN received and will return it
+    as a hash parameter_name: value. If a temporary definition is found, then that
+    environment will be replaced by the one stored by default in the Nodes database.
+    Finally if no definitions were found for the received FQDN, then this function
+    will return None
+
+    Parameters
+    ----------
+        dbfn: string
+            sqlite3 database filename
+        node: string
+            fully qualified domain name of a given node
+    
+    Returns
+    ----------
+        None
+            If no definitions were found.
+        Hash
+            If a node definition was found in the database. The hash has to format of
+            db_column_name: value
+
     """
     conn = sqlite3.connect( dbfn )
     conn.row_factory = sqlite3.Row
@@ -101,7 +170,7 @@ def sql_lookup( dbfn, node ):
 
 
 def output_yaml(enc):
-    """ output_yaml renders the hash as yaml and exits cleanly
+    """Output_yaml renders the hash as yaml and exits cleanly
     """
     # output the ENC as yaml
     print ("---")
@@ -109,6 +178,9 @@ def output_yaml(enc):
 
 
 def run():
+    """It will search in the DB for the right environment to be applied to the received FQDN either
+    in a temporary manner or the default and production configuration to finally print it in YAML format
+    """
     args = process_cmdline()
 
     # basics
