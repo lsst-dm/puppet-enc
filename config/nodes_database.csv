@@ -4,6 +4,7 @@ ts-sw-env,ts,bdc,tcs,role::ts::ts_dev_env_basic,production
 ts-visitsim,ts,bdc,tcs,role::ts::ts_visit_simulator,production
 ats-shutter-hcu,ccs,bdc,ccs,role::ccs::ats_shutter_hcu,production
 ts-efd,ts,bdc,tcs,role::ts::efd,production
+efd,ts,bdc,tcs,role::ts::efd,production
 ts-intcluster,ts,bdc,tcs,role::ts::ts_intcluster,production
 tcs-dome,ts,bdc,tcs,role::ts::ts_dome,production
 tcs-rotator,ts,bdc,tcs,role::ts::ts_rotator,production
