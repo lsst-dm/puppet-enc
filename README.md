@@ -2,38 +2,49 @@
 External Node Classifier for Puppet Master
 
 # Installation
-1. `cd /etc/puppetlabs/code/config/scripts/`
+1. `cd /etc/puppetlabs/code/config/`
 1. `git clone https://github.com/lsst-dm/puppet-enc.git`
 1. Edit `/etc/puppetlabs/puppet/puppet.conf`
    ```
    node_terminus = exec
-   external_nodes = /etc/puppetlabs/code/config/scripts/lsst_enc.py
+   external_nodes = /etc/puppetlabs/code/config/bin/lsst_enc.py
    ```
-1. Edit `puppet_enc_sqlite_source.csv`
-1. `./import_csv`
+1. Edit `config/nodes_database.csv`
+1. `make configure import`
 
 # Usage
+
+* Help for admin script
+  * `python3 admin.py -h`
+* Help for lsst_enc.py
+  * `python3 lsst_enc.py -h`
 * View contents of entire database
-  * `lsdb.sh`
+  * `python3 admin.py -d ../data/puppet_enc.sqlite -l`
 * View settings for nodes matching a (sub)string
-  * `lsnode.sh` _STRING_
-  * Example: Show all nodes with the string _test_ anywhere in their FQDN
-    * `lsnode.sh test`
+  * `python3 admin.py -d ../data/puppet_enc.sqlite -L --node-def <NODE_DEF_STRING>`
+  * `python3 admin.py -d ../data/puppet_enc.sqlite -L -fqdn <FQDN>`
 * Update a node
-  * `chnode.sh` _FQDN KEY VALUE_
+  * `python3 admin.py -d ../data/puppet_enc.sqlite -u --node-def <NODE_DEF> -a key1=value1 -a key2=value2 ...` 
   * Example: Move node to test environment
-    * `chnode.sh my_test_node.vm.dev.lsst.org environment test`
+    * `python3 admin.py -d ../data/puppet_enc.sqlite -u --node-def graylog -a environment=test`
 * Update a node (alternative)
-  * Edit `/etc/puppetlabs/puppet/puppet_enc_sqlite_source.csv`
-  * `./import_csv`
+  * Edit `/etc/puppetlabs/code/config/nodes_database.csv`
+  * `make import`
+* Export data to CSV
+  * `make export`
 
 # Testing
 1. Run it from the cmdline
    ```
    # Example:
-   /etc/puppetlabs/code/config/scripts/lsst_enc.py my_test_node.vm.dev.lsst.org
-   ---
-   classes: ['role::default']
-   environment: test
-   parameters: {cluster: default, datacenter: npcf, enc_hostname: my_test_node.vm.dev.lsst.org, role: default, site: ncsa}
+   python3 admin.py -d ../data/puppet_enc.sqlite -L -fqdn gs-grafana-node-01.cl.cp.lsst.org
+   +-----------------+------+------------+---------+-------------------+-------------+
+   | node_definition | site | datacenter | cluster |              role | environment |
+   +-----------------+------+------------+---------+-------------------+-------------+
+   | grafana         |   cp |         cp |      gs | role::it::grafana |     develop |
+   +-----------------+------+------------+---------+-------------------+-------------+
+   +------+-------------+---------------+-------------+
+   | fqdn | environment | ConfTimeStart | ConfTimeEnd |
+   +------+-------------+---------------+-------------+
+   +------+-------------+---------------+-------------+
    ```
