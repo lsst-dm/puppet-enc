@@ -15,5 +15,6 @@ import:
 	sqlite3 data/puppet_enc.sqlite < config/database.sql
 
 export:
+	if [ ! -d "data/backup" ]; then mkdir data/backup ; fi
 	sqlite3 -header -csv data/puppet_enc.sqlite "select * from Nodes" > data/backup/nodes_database.csv
 	sqlite3 -header -csv data/puppet_enc.sqlite "select * from TemporaryEnvironmentConfiguration" > data/backup/environments_database.csv
