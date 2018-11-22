@@ -13,8 +13,8 @@ def process_cmdline():
     command line or puppet. This script should be executed by default only by puppet, so 
     most likely to use the default value for the database location.
 
-    Return:
-        Args.
+    Returns
+    ----------
     """
     desc = "LSST Puppet ENC"
     parser = argparse.ArgumentParser( description=desc )
@@ -43,26 +43,25 @@ def find_node_definition(cursor, fqdn):
 
     Parameters
     ----------
-        cursor: sqlite3.Connection.cursor
+        cursor: `sqlite3.Connection.cursor`
             Cursor used to interact with the database
-        fqdn: String
+        fqdn: `str`
             Fully Qualified Domain Name, used to determine which role must be applied.
 
     Returns
     ----------
-        None: if no node definitions were found.
-        String: The node definition that best match the FQDN received. 
+        node_def: `str` or `None`
+            The node definition that best match the FQDN received or `None` if none is found. 
     """
     sql = "SELECT node_definition FROM Nodes"
     node_regex = cursor.execute( sql )
-    selected_definition = None
+    selected_definition = ""
     aux = ""
     for n in node_regex:
-        pattern = re.compile(n[0])
-        aux = re.search(pattern,fqdn)
-        if aux != None and len(str(aux)) > len(str(selected_definition)):
+        aux = re.search(n[0],fqdn)
+        if aux != None and len(str(aux.group(0))) > len(selected_definition):
             selected_definition = aux
-    if selected_definition == None:
+    if selected_definition == "":
         return None
     else:
         return selected_definition.group(0)
@@ -81,15 +80,16 @@ def find_temporary_environment(cursor, fqdn):
 
     Parameters
     ----------
-        cursor: sqlite3.Connection.cursor
+        cursor: `sqlite3.Connection.cursor`
             Cursor used to interact with the database
-        fqdn: String
+        fqdn: `str`
             Fully Qualified Domain Name, used to determine which role must be applied.
 
     Returns
     ----------
-        None: if no temporary configuration was found for this given FQDN
-        String: The environment stored in the DB that has to be applied to that FQDN in the given period of time.
+        environment: `str` or `None`
+            If no temporary configuration was found for this given FQDN and `str` if an environment 
+            stored in the DB has to be applied to that FQDN in the given period of time.
     """
     sql = "SELECT environment, ConfTimeStart, ConfTimeEnd FROM TemporaryEnvironmentConfiguration WHERE fqdn=?"
     cursor.execute( sql, (fqdn,) )
@@ -103,17 +103,16 @@ def find_temporary_environment(cursor, fqdn):
     else:
         conf_start = datetime.strptime(rv["ConfTimeStart"], '%Y-%m-%d %H:%M:%S')
         conf_end = datetime.strptime(rv["ConfTimeEnd"], '%Y-%m-%d %H:%M:%S')
-
         today = datetime.today()
         if conf_end < today:
-            print("Delete this host from the environments database")
+            #print("Delete this host from the environments database")
             cursor.execute( "DELETE FROM TemporaryEnvironmentConfiguration WHERE fqdn=(?)", (fqdn,) )
             return None
         if conf_start > today:
-            print("This environment shouldn't be used yet")
+            #print("This environment shouldn't be used yet")
             return None
         else:
-            print("This is the environment that should be used for this host during this period")
+            #print("This is the environment that should be used for this host during this period")
             return rv["environment"]
 
 #TODO Improve the query in such a way that can be inferred from hiera_parameters.yaml
@@ -131,18 +130,16 @@ def sql_lookup( dbfn, node ):
 
     Parameters
     ----------
-        dbfn: string
+        dbfn: `str`
             sqlite3 database filename
-        node: string
+        node: `str`
             fully qualified domain name of a given node
     
     Returns
     ----------
-        None
-            If no definitions were found.
-        Hash
-            If a node definition was found in the database. The hash has to format of
-            db_column_name: value
+        parameters_hash: `None` or `Hash`
+            `None` If no definitions were found. `Hash` If a node definition was found 
+            in the database. The hash has to format of db_column_name: value
 
     """
     conn = sqlite3.connect( dbfn )
@@ -188,6 +185,7 @@ def run():
     parms = { "enc_hostname": args.fqdn }
 
     # Get info from DB
+
     db_data = sql_lookup( args.dbfilename, args.fqdn )
 
     # Attempt to extract environment from DB or use default value 'production'

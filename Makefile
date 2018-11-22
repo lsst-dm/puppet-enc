@@ -13,3 +13,7 @@ clean_db:
 
 import:
 	sqlite3 data/puppet_enc.sqlite < config/database.sql
+
+export:
+	sqlite3 -header -csv data/puppet_enc.sqlite "select * from Nodes" > data/backup/nodes_database.csv
+	sqlite3 -header -csv data/puppet_enc.sqlite "select * from TemporaryEnvironmentConfiguration" > data/backup/environments_database.csv
