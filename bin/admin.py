@@ -26,7 +26,7 @@ def process_cmdline():
     parser.add_argument( '--assign-env', help="Assign an environment to a given FQDN, use -a to indicate environments and dates. You can use as many as you need", action='store_true')
     parser.add_argument( '--new-temp-node', help="Assign a temporary environment to a new node", action='store_true')
     defaults = { 
-        'dbfilename': '/etc/puppetlabs/code/config/data/puppet_enc.sqlite',
+        'dbfilename': '/etc/puppetlabs/code/enc/data/puppet_enc.sqlite',
     }
     parser.set_defaults( **defaults )
     args = parser.parse_args()
