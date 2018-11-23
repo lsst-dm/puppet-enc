@@ -2,12 +2,12 @@
 External Node Classifier for Puppet Master
 
 # Installation
-1. `cd /etc/puppetlabs/code/config/`
+1. `cd /etc/puppetlabs/code/enc/`
 1. `git clone https://github.com/lsst-dm/puppet-enc.git`
 1. Edit `/etc/puppetlabs/puppet/puppet.conf`
    ```
    node_terminus = exec
-   external_nodes = /etc/puppetlabs/code/config/bin/lsst_enc.py
+   external_nodes = /etc/puppetlabs/code/enc/bin/lsst_enc.py
    ```
 1. Edit `config/nodes_database.csv`
 1. `make configure import`
@@ -28,7 +28,7 @@ External Node Classifier for Puppet Master
   * Example: Move node to test environment
     * `python3 admin.py -d ../data/puppet_enc.sqlite -u --node-def graylog -a environment=test`
 * Update a node (alternative)
-  * Edit `/etc/puppetlabs/code/config/nodes_database.csv`
+  * Edit `/etc/puppetlabs/code/enc/nodes_database.csv`
   * `make import`
 * Export data to CSV
   * `make export`

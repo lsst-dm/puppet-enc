@@ -22,7 +22,7 @@ def process_cmdline():
         help="Sqlite3 database filename [default='%(default)s]'" )
     parser.add_argument( 'fqdn', metavar='FQDN' )
     defaults = { 
-        'dbfilename': '/etc/puppetlabs/code/config/data/puppet_enc.sqlite',
+        'dbfilename': '/etc/puppetlabs/code/enc/data/puppet_enc.sqlite',
     }
     parser.set_defaults( **defaults )
     args = parser.parse_args()
