@@ -1,7 +1,7 @@
 
 configure:
 	#Creates SQL file to import the configuration described in the hiera parameters.
-	python3.6 bin/configuration.py confi/hiera_parameters.yaml config/database.sql
+	python3.6 bin/configuration.py config/hiera_parameters.yaml config/database.sql
 
 clean: clean_config clean_db
 
