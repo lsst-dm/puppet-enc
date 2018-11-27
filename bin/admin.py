@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python3.6
 # Python Database quick Nodes administrator
 
 from prettytable import PrettyTable
@@ -144,7 +144,7 @@ def update(cursor, table, pk, node_def, parameter_list):
         parsed_param = parameter.split("=")
         key = parsed_param[0]
         value = parsed_param[1]
-        ows = cursor.execute( "UPDATE "+table+" SET " + key + " = '" + value + "' WHERE "+pk+"=?", (node_def,))
+        cursor.execute( "UPDATE "+table+" SET " + key + " = '" + value + "' WHERE "+pk+"=?", (node_def,))
 
 def insert_new_temp_node(cursor, parameter_list):
     """Insert a new node in the TemporaryEnvironmentConfiguration table.

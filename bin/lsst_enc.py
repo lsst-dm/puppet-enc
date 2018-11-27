@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python3.6
 # Python ENC
 # receives fqdn as argument
 
