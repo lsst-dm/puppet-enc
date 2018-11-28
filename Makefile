@@ -12,6 +12,7 @@ clean_db:
 	rm data/puppet_enc.sqlite
 
 import:
+	if [ ! -d "data/" ]; then mkdir data ; fi
 	sqlite3 data/puppet_enc.sqlite < config/database.sql
 
 export:
