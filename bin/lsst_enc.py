@@ -151,7 +151,7 @@ def sql_lookup( dbfn, node ):
     if node_definition == None:
         return {}
     else:
-        sql = "select site,datacenter,cluster,role,environment from Nodes where node_definition = '" + node_definition + "'"
+        sql = "select * from Nodes where node_definition = '" + node_definition + "'"
         c.execute( sql )
         r = c.fetchone()
         rv = {}
