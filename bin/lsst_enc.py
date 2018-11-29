@@ -191,6 +191,12 @@ def run():
     # Attempt to extract environment from DB or use default value 'production'
     env = db_data.pop( 'environment', 'develop' )
 
+    # Get classes from DB if any declared, this is a semi-colon separated string in the DB
+    classes_text = db_data.pop('classes', '')
+    if classes_text != '' :
+        for c in classes_text.split(";"):
+            classes.append(c)
+
     # Fill in additional details from DB
     parms.update( db_data )
     try:
@@ -198,7 +204,8 @@ def run():
     except ( KeyError ) as e:
         classes.append( "role::default" )
     else:
-        classes = [ '{0}'.format( role ) ]
+        if len(classes) == 0:
+            classes = [ '{0}'.format( role ) ]
     
     # build hash for yaml
     enc = { 
