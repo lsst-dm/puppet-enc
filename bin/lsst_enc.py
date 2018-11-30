@@ -205,7 +205,7 @@ def run():
         classes.append( "role::default" )
     else:
         if len(classes) == 0:
-            classes = [ '{0}'.format( role ) ]
+            classes = [ "role::default" ]
     
     # build hash for yaml
     enc = { 
