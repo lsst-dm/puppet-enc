@@ -201,6 +201,7 @@ def run():
     parms.update( db_data )
     try:
         role = db_data[ 'role' ]
+        classes.append( role )
     except ( KeyError ) as e:
         classes.append( "role::default" )
     else:
