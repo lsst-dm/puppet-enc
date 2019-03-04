@@ -148,8 +148,10 @@ def sql_lookup( dbfn, node ):
     node_definition = find_node_definition(c, node)
     temp_env = find_temporary_environment(c, node)
 
-    if node_definition == None:
+    if node_definition == None and temp_env == None:
         return {}
+    elif temp_env != None:
+        return {"environment": temp_env}
     else:
         sql = "select * from Nodes where node_definition = '" + node_definition + "'"
         c.execute( sql )
