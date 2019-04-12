@@ -59,7 +59,7 @@ def find_node_definition(cursor, fqdn):
     aux = ""
     for n in node_regex:
         aux = re.search(n[0],fqdn)
-        if aux != None and len(str(aux.group(0))) > len(selected_definition):
+        if aux != None and len(str(aux.group(0))) > len(str(selected_definition)):
             selected_definition = aux
     if selected_definition == "":
         return None
