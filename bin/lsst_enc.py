@@ -60,11 +60,11 @@ def find_node_definition(cursor, fqdn):
     for n in node_regex:
         aux = re.search(n[0],fqdn)
         if aux != None and len(str(aux.group(0))) > len(str(selected_definition)):
-            selected_definition = aux
+            selected_definition = aux.group(0)
     if selected_definition == "":
         return None
     else:
-        return selected_definition.group(0)
+        return selected_definition
 
 def find_temporary_environment(cursor, fqdn):
     """Find if there is any temporary environment definition for a given node.
